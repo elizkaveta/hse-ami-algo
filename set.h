@@ -1,4 +1,5 @@
-#include <bits/stdc++.h>
+#include <iostream>
+
 
 template<class ValueType>
 class AVL {
@@ -8,17 +9,17 @@ public:
         Node* left = nullptr;
         Node* right = nullptr;
         Node* parent = nullptr;
-        int64_t height = 0;
+        size_t height = 0;
 
         Node() {
             left = right = parent = nullptr;
             height = 0;
         }
 
-        Node(const ValueType& val) {
+        Node(const ValueType& value_to_copy) {
             left = right = parent = nullptr;
             height = 0;
-            value = val;
+            value = value_to_copy;
         }
 
         Node* copy() {
@@ -39,15 +40,15 @@ public:
     };
 
     AVL() {
-        root = nullptr;
+        root_ = nullptr;
         size_ = 0;
     }
 
     AVL(const AVL& bst) {
-        if (bst.root == nullptr) {
+        if (bst.root_ == nullptr) {
             return;
         }
-        root = bst.root->copy();
+        root_ = bst.root_->copy();
         size_ = bst.size();
     }
 
@@ -56,32 +57,32 @@ public:
             return *this;
         }
         clear_tree();
-        if (bst.root == nullptr) {
+        if (bst.root_ == nullptr) {
             return *this;
         }
-        root = bst.root->copy();
+        root_ = bst.root_->copy();
         size_ = bst.size();
         return *this;
     }
 
     Node* find(const ValueType& key) const {
-        return find(key, root);
+        return find(key, root_);
     }
 
     void insert(const ValueType& key) {
-        if (find(key, root) != nullptr) {
+        if (find(key, root_) != nullptr) {
             return;
         }
         ++size_;
-        insert(key, root);
+        insert(key, root_);
     }
 
     void erase(const ValueType& key) {
-        if (find(key, root) == nullptr) {
+        if (find(key, root_) == nullptr) {
             return;
         }
         --size_;
-        root = erase(key, root);
+        root_ = erase(key, root_);
     }
 
     size_t size() const {
@@ -89,25 +90,25 @@ public:
     }
 
     Node* find_min_node() const {
-        return find_min_node(root);
+        return find_min_node(root_);
     }
 
     Node* find_max_node() const {
-        return find_max_node(root);
+        return find_max_node(root_);
     }
 
     void clear_tree() {
         size_ = 0;
-        return clear_tree(root);
+        return clear_tree(root_);
     }
 
     Node* lower_bound(const ValueType& key) const {
-        return lower_bound(key, root);
+        return lower_bound(key, root_);
     }
 
 private:
     size_t size_ = 0;
-    Node* root;
+    Node* root_;
 
     void set_parent(Node* t, Node* parent) {
         if (t == nullptr) {
@@ -166,9 +167,9 @@ private:
         }
         clear_tree(t->left);
         clear_tree(t->right);
-        if (t == root) {
+        if (t == root_) {
             delete t;
-            root = nullptr;
+            root_ = nullptr;
             return;
         }
         delete t;
@@ -409,8 +410,8 @@ public:
             return !(node_->value < it.node_->value || it.node_->value < node_->value);
         }
 
-        const ValueType& operator->() const {
-            return node_->value;
+        const ValueType* operator->() const {
+            return &(node_->value);
         }
 
         ValueType* operator->() {
